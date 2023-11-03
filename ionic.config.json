@@ -1,0 +1,7 @@
+{
+  "name": "Asistemax",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
