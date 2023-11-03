@@ -6,6 +6,7 @@
 
     <app-logo></app-logo>
 
+    <!-- CREACION DE EMAIL -->
     <app-custom-input 
     autocomplete="email" 
     icon="mail-outline" 
@@ -18,7 +19,8 @@
       <div *ngIf="form.controls.email.errors?.['required']">El correo es requerido</div>
       <div *ngIf="form.controls.email.errors?.['email']">Ingrese un correo valido</div>
     </div>
-    
+
+    <!-- CREACION DE PASSWORD -->
     <app-custom-input 
     [control]="form.controls.password"
     icon="lock-closed-outline"
