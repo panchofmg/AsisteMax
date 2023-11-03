@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { User } from '../models/user.model';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { getFirestore, setDoc, doc } from '@angular/fire/firestore';
+import { getFirestore, setDoc, doc, getDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +30,22 @@ export class FirebaseService {
     return updateProfile(getAuth().currentUser, { displayName })
   }
 
+  // === ENVIAR EMAIL PARA REESTABLECER CONTRASEÑA === //
+  sendRecoveryEmail(email: string) {
+    return sendPasswordResetEmail(getAuth(), email);
+  }
+
 
   // === BASE DE DATOS === //
 
     // == SETEAR UN DOCUMENTO == //
     setDocument(path: string, data: any) {
       return setDoc(doc(getFirestore(), path), data);
+    }
+
+    // == OBTENER UN DOCUMENTO == //
+    async getDocument(path: string) {
+      return (await getDoc(doc(getFirestore(), path))).data();
     }
 
 }
