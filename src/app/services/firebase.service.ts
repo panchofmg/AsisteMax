@@ -14,6 +14,9 @@ export class FirebaseService {
   firestore = inject(AngularFirestore);
 
   // ====== AUTENTICACIÓN ===== //
+  getAuth() {
+    return getAuth();
+  }
 
   // === ACCEDER === //
   signIn(user: User) {
