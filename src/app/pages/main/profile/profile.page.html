@@ -1,1 +1,6 @@
-<app-header title="Perfil"></app-header>
+<app-header [showMenu]="true" title="Perfil"></app-header>
+
+<ion-content>
+    <h2>{{user().name}}</h2>
+    <div>{{user().email}}</div>
+</ion-content>
