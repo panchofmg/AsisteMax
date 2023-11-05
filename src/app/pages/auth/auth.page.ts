@@ -63,14 +63,6 @@ export class AuthPage implements OnInit {
         this.utilsSvc.routerLink('/main/home');
         this.form.reset();
 
-        this.utilsSvc.presentToast({
-          message: 'Bienvenido a Asistemax',
-          duration: 1500,
-          color: 'primary',
-          position: 'middle',
-          icon: 'person-circle-outline'
-        })
-
       }).catch(error => {
         console.log(error);
 
