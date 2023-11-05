@@ -4,19 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { MainPageRoutingModule } from './main-routing.module';
+import { EscanearPageRoutingModule } from './escanear-routing.module';
 
-import { MainPage } from './main.page';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { EscanearPage } from './escanear.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MainPageRoutingModule,
-    SharedModule
+    EscanearPageRoutingModule
   ],
-  declarations: [MainPage]
+  declarations: [EscanearPage]
 })
-export class MainPageModule {}
+export class EscanearPageModule {}
