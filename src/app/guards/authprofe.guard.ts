@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
       return new Promise((resolve) => {
         this.firebaseSvc.getAuth().onAuthStateChanged((auth) => {
           if (auth){
-            if(auth.email.includes("duoc")){
+            if(auth.email.includes("profesor")){
                 resolve(true)
             };
           }
