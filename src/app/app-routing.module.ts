@@ -17,6 +17,11 @@ const routes: Routes = [
     path: 'main',
     loadChildren: () => import('./pages/main/main.module').then( m => m.MainPageModule), canActivate:[AuthGuard]
   },
+  {
+    path: 'profesor',
+    loadChildren: () => import('./pages/profesor/profesor.module').then( m => m.ProfesorPageModule), canActivate:[AuthGuard]
+  },
+
 ];
 
 @NgModule({
