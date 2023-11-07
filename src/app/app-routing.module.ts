@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes, CanActivate } from '@angular/router';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { AuthGuard } from './guards/auth.guard';
+import { AuthGuardProfe } from './guards/authprofe.guard';
 
 const routes: Routes = [
   {
@@ -11,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'auth',
-    loadChildren: () => import('./pages/auth/auth.module').then( m => m.AuthPageModule), canActivate:[NoAuthGuard]
+    loadChildren: () => import('./pages/auth/auth.module').then( m => m.AuthPageModule)
   },
   {
     path: 'main',
@@ -19,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: 'profesor',
-    loadChildren: () => import('./pages/profesor/profesor.module').then( m => m.ProfesorPageModule), canActivate:[AuthGuard]
+    loadChildren: () => import('./pages/profesor/profesor.module').then( m => m.ProfesorPageModule), canActivate:[AuthGuardProfe]
   },
 
 ];
