@@ -7,7 +7,7 @@ import { UtilsService } from '../services/utils.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuardProfe implements CanActivate {
 
   firebaseSvc = inject(FirebaseService);
   utilsSvc = inject(UtilsService);
@@ -18,18 +18,21 @@ export class AuthGuard implements CanActivate {
 
       let user = localStorage.getItem('user');
     
-      return new Promise((resolve) => {
-        this.firebaseSvc.getAuth().onAuthStateChanged((auth) => {
-          if (auth){
-            if(auth.email.includes("profesor")){
-                resolve(true)
-            };
-          }
-          else{
+      return new Promise(async (resolve) => {
+        this.firebaseSvc.getAuth().onAuthStateChanged(async (auth) => {
+          if (auth) {
+            const { email } = this.utilsSvc.getFromLocalStorage('user');
+            if (email.includes('profesor')) {
+              resolve(true);
+            } else {
+              this.utilsSvc.routerLink('/auth');
+              resolve(false);
+            }
+          } else {
             this.utilsSvc.routerLink('/auth');
             resolve(false);
           }
-        })
+        });
       });
   }
   
