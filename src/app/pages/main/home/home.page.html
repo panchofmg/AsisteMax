@@ -1,1 +1,13 @@
 <app-header [showMenu]="true" title="Inicio"></app-header>
+
+<h1 class="d-flex-center">ASISTENCIAS</h1>
+<ion-content>
+    <ion-list>
+      <ion-item *ngFor="let asignatura of asignaturas">
+        <ion-label>{{ asignatura.nombre }}</ion-label>
+        <ion-button (click)="aumentarPorcentaje(asignatura)">
+          {{ asignatura.porcentaje < 100 ? asignatura.porcentaje : 'Completo' }}%
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
