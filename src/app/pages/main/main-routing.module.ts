@@ -23,6 +23,10 @@ const routes: Routes = [
       {
         path: 'escanear',
         loadChildren: () => import('./escanear/escanear.module').then( m => m.EscanearPageModule)
+      },
+      {
+        path: 'detalles-asignatura',
+        loadChildren: () => import('./detalles-asignatura/detalles-asignatura.module').then( m => m.DetallesAsignaturaPageModule)
       }
     ]
   },
