@@ -25,7 +25,7 @@ const routes: Routes = [
         loadChildren: () => import('./escanear/escanear.module').then( m => m.EscanearPageModule)
       },
       {
-        path: 'detalles-asignatura',
+        path: 'detalles-asignatura/:id', // Ajustado para incluir un parámetro ID
         loadChildren: () => import('./detalles-asignatura/detalles-asignatura.module').then( m => m.DetallesAsignaturaPageModule)
       }
     ]
