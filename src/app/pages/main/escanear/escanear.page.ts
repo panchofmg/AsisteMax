@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class EscanearPage implements OnInit {
   isSupported = false;
+  isScanning = false; // Variable para controlar la visibilidad del recuadro de reconocimiento
   barcodes: Barcode[] = [];
   @ViewChild('video', { static: false }) video: ElementRef;
 
@@ -35,14 +36,19 @@ export class EscanearPage implements OnInit {
   }
 
   async scan(): Promise<void> {
+    this.isScanning = true; // Muestra el recuadro de reconocimiento
+
     const granted = await this.requestPermissions();
     if (!granted) {
       this.presentAlert('Permiso denegado', 'Por favor, garantiza los permisos de la cámara.');
+      this.isScanning = false; // Oculta el recuadro si se deniegan los permisos
       return;
     }
 
     const { barcodes } = await BarcodeScanner.scan();
     this.barcodes.push(...barcodes);
+
+    this.isScanning = false; // Oculta el recuadro después de escanear
 
     if (barcodes.length > 0) {
       const scannedCode = barcodes[0].rawValue;

@@ -5,6 +5,8 @@
     <video #video autoplay playsinline></video>
   </div>
 
+  <div *ngIf="isScanning" class="qr-scanning-box"></div>
+
   <ion-list>
     <ion-item *ngFor="let barcode of barcodes">
       <ion-label position="stacked">{{ barcode.format }}</ion-label>
