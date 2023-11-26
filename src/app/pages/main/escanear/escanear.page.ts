@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { AlertController } from '@ionic/angular';
 
@@ -10,9 +10,11 @@ import { AlertController } from '@ionic/angular';
 export class EscanearPage implements OnInit {
   isSupported = false;
   barcodes: Barcode[] = [];
-  @ViewChild('video', { static: false }) video: ElementRef;
+  @ViewChild('videoFront', { static: false }) videoFront: ElementRef;
+  @ViewChild('videoBack', { static: false }) videoBack: ElementRef;
+  cameraFacingMode: 'user' | 'environment' = 'environment'; // Inicia con la cámara trasera
 
-  constructor(private alertController: AlertController) { }
+  constructor(private alertController: AlertController, private renderer: Renderer2) { }
 
   ngOnInit() {
     BarcodeScanner.isSupported().then((result) => {
@@ -24,8 +26,27 @@ export class EscanearPage implements OnInit {
   }
 
   async initCamera(): Promise<void> {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-    this.video.nativeElement.srcObject = stream;
+    const streamFront = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user' },
+    });
+    this.videoFront.nativeElement.srcObject = streamFront;
+
+    const streamBack = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
+    });
+    this.videoBack.nativeElement.srcObject = streamBack;
+
+    this.showCamera();
+  }
+
+  showCamera(): void {
+    if (this.cameraFacingMode === 'user') {
+      this.renderer.setStyle(this.videoFront.nativeElement, 'display', 'block');
+      this.renderer.setStyle(this.videoBack.nativeElement, 'display', 'none');
+    } else {
+      this.renderer.setStyle(this.videoFront.nativeElement, 'display', 'none');
+      this.renderer.setStyle(this.videoBack.nativeElement, 'display', 'block');
+    }
   }
 
   async scan(): Promise<void> {
@@ -52,11 +73,13 @@ export class EscanearPage implements OnInit {
     await alert.present();
   }
 
-  guardarMensaje() {
-    // Crear un mensaje que incluye la hora del sistema
-    const mensaje = "Ubicación: Las Palomas 7839, Hora del dispositivo: " + new Date().toLocaleString();
+  toggleCamera(): void {
+    this.cameraFacingMode = this.cameraFacingMode === 'user' ? 'environment' : 'user';
+    this.showCamera();
+  }
 
-    // Almacenar el mensaje en el localStorage
+  guardarMensaje() {
+    const mensaje = "Ubicación: Las Palomas 7839, Hora del dispositivo: " + new Date().toLocaleString();
     localStorage.setItem('mensaje', mensaje);
   }
 }
