@@ -10,4 +10,8 @@
   <ion-item>
     <ion-label>Sección: {{ asignatura.seccion }}</ion-label>
   </ion-item>
+  <!-- Muestra la imagen del código QR -->
+  <ion-item>
+    <img [src]="asignatura.qrPath" alt="Código QR">
+  </ion-item>
 </ion-content>

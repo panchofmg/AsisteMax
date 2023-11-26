@@ -14,10 +14,4 @@ export class DetallesAsignaturaPage implements OnInit {
   ngOnInit() {
     this.asignatura = history.state.asignatura;
   }
-
-  // Método para generar el contenido del código QR
-  generateQRCodeData(): string {
-    // Puedes ajustar esto según lo que desees en el código QR
-    return this.asignatura ? `Asignatura ID: ${this.asignatura.id}` : '';
-  }
 }

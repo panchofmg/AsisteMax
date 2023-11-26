@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-escanear',
@@ -12,7 +13,10 @@ export class EscanearPage implements OnInit {
   barcodes: Barcode[] = [];
   @ViewChild('video', { static: false }) video: ElementRef;
 
-  constructor(private alertController: AlertController) { }
+  constructor(
+    private alertController: AlertController,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     BarcodeScanner.isSupported().then((result) => {
@@ -33,11 +37,24 @@ export class EscanearPage implements OnInit {
   async scan(): Promise<void> {
     const granted = await this.requestPermissions();
     if (!granted) {
-      this.presentAlert();
+      this.presentAlert('Permiso denegado', 'Por favor, garantiza los permisos de la cámara.');
       return;
     }
+
     const { barcodes } = await BarcodeScanner.scan();
     this.barcodes.push(...barcodes);
+
+    if (barcodes.length > 0) {
+      const scannedCode = barcodes[0].rawValue;
+      const matchedAsignatura = this.asignaturas.find(asignatura => asignatura.qrCode === scannedCode);
+
+      if (matchedAsignatura) {
+        matchedAsignatura.asistencia += 1;
+        this.presentAlert('Éxito', 'Código QR escaneado. Asistencia registrada.');
+      } else {
+        this.presentAlert('Error', 'Código QR no reconocido.');
+      }
+    }
   }
 
   async requestPermissions(): Promise<boolean> {
@@ -45,10 +62,10 @@ export class EscanearPage implements OnInit {
     return camera === 'granted' || camera === 'limited';
   }
 
-  async presentAlert(): Promise<void> {
+  async presentAlert(header: string, message: string): Promise<void> {
     const alert = await this.alertController.create({
-      header: 'Permiso denegado',
-      message: 'Por favor, garantiza los permisos a la aplicación para poder utilizar la cámara.',
+      header,
+      message,
       buttons: ['OK'],
     });
     await alert.present();
@@ -58,4 +75,12 @@ export class EscanearPage implements OnInit {
     const mensaje = "Ubicación: Las Palomas 7839, Hora del dispositivo: " + new Date().toLocaleString();
     localStorage.setItem('mensaje', mensaje);
   }
+
+  asignaturas: { id: number; nombre: string; qrCode: string; asistencia: number }[] = [
+    { id: 1, nombre: 'Gestión de proyectos informáticos', qrCode: 'qr_gestion_proyectos', asistencia: 0 },
+    { id: 2, nombre: 'Calidad de Software', qrCode: 'qr_calidad_software', asistencia: 0 },
+    { id: 3, nombre: 'Inglés Elemental', qrCode: 'qr_ingles_elemental', asistencia: 0},
+    { id: 4, nombre: 'Estadística descriptiva', qrCode: 'qr_estadistica_descriptiva', asistencia: 0},
+    { id: 5, nombre: 'Seguridad en sistemas computacionales', qrCode: 'qr_seguridad_sistemas', asistencia: 0},
+  ];
 }
