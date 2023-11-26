@@ -2,8 +2,7 @@
 
 <ion-content>
   <div *ngIf="isSupported">
-    <video *ngIf="cameraFacingMode === 'user'" #videoFront autoplay playsinline></video>
-    <video *ngIf="cameraFacingMode === 'environment'" #videoBack autoplay playsinline></video>
+    <video #video autoplay playsinline></video>
   </div>
 
   <ion-list>
@@ -14,8 +13,8 @@
   </ion-list>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="toggleCamera()" [disabled]="!isSupported">
-      <ion-icon name="camera-reverse"></ion-icon>
+    <ion-fab-button (click)="scan()" [disabled]="!isSupported">
+      <ion-icon name="scan"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>
