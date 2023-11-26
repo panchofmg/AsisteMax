@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Barcode, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { AlertController } from '@ionic/angular';
 
@@ -10,11 +10,9 @@ import { AlertController } from '@ionic/angular';
 export class EscanearPage implements OnInit {
   isSupported = false;
   barcodes: Barcode[] = [];
-  @ViewChild('videoFront', { static: false }) videoFront: ElementRef;
-  @ViewChild('videoBack', { static: false }) videoBack: ElementRef;
-  cameraFacingMode: 'user' | 'environment' = 'environment'; // Inicia con la cámara trasera
+  @ViewChild('video', { static: false }) video: ElementRef;
 
-  constructor(private alertController: AlertController, private renderer: Renderer2) { }
+  constructor(private alertController: AlertController) { }
 
   ngOnInit() {
     BarcodeScanner.isSupported().then((result) => {
@@ -26,27 +24,10 @@ export class EscanearPage implements OnInit {
   }
 
   async initCamera(): Promise<void> {
-    const streamFront = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user' },
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' } // Utiliza siempre la cámara trasera
     });
-    this.videoFront.nativeElement.srcObject = streamFront;
-
-    const streamBack = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' },
-    });
-    this.videoBack.nativeElement.srcObject = streamBack;
-
-    this.showCamera();
-  }
-
-  showCamera(): void {
-    if (this.cameraFacingMode === 'user') {
-      this.renderer.setStyle(this.videoFront.nativeElement, 'display', 'block');
-      this.renderer.setStyle(this.videoBack.nativeElement, 'display', 'none');
-    } else {
-      this.renderer.setStyle(this.videoFront.nativeElement, 'display', 'none');
-      this.renderer.setStyle(this.videoBack.nativeElement, 'display', 'block');
-    }
+    this.video.nativeElement.srcObject = stream;
   }
 
   async scan(): Promise<void> {
@@ -71,11 +52,6 @@ export class EscanearPage implements OnInit {
       buttons: ['OK'],
     });
     await alert.present();
-  }
-
-  toggleCamera(): void {
-    this.cameraFacingMode = this.cameraFacingMode === 'user' ? 'environment' : 'user';
-    this.showCamera();
   }
 
   guardarMensaje() {
