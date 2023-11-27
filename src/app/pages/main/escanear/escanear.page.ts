@@ -10,48 +10,45 @@ import { Router } from '@angular/router';
 })
 export class EscanearPage implements OnInit {
   isSupported = false;
-  isScanning = false; // Variable para controlar la visibilidad del recuadro de reconocimiento
+  isScanning = false;
   barcodes: Barcode[] = [];
   @ViewChild('video', { static: false }) video: ElementRef;
 
   constructor(
     private alertController: AlertController,
     private router: Router
-  ) { }
+  ) {}
 
-  ngOnInit() {
-    BarcodeScanner.isSupported().then((result) => {
-      this.isSupported = result.supported;
-      if (this.isSupported) {
-        this.initCamera();
-      }
-    });
+  async ngOnInit() {
+    this.isSupported = await this.checkBarcodeScannerSupport();
+    if (this.isSupported) {
+      this.initCamera();
+    } else {
+      this.presentAlert('Error', 'El escaneo de códigos no es compatible en este dispositivo.');
+    }
   }
 
   async initCamera(): Promise<void> {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' } // Utiliza siempre la cámara trasera
+      video: { facingMode: 'environment' }
     });
     this.video.nativeElement.srcObject = stream;
   }
 
   async scan(): Promise<void> {
-    this.isScanning = true; // Muestra el recuadro de reconocimiento
+    this.isScanning = true;
 
     const granted = await this.requestPermissions();
     if (!granted) {
+      this.isScanning = false;
       this.presentAlert('Permiso denegado', 'Por favor, garantiza los permisos de la cámara.');
-      this.isScanning = false; // Oculta el recuadro si se deniegan los permisos
       return;
     }
 
-    const { barcodes } = await BarcodeScanner.scan();
-    this.barcodes.push(...barcodes);
+    const scannedCode = await this.scanSingleBarcode();
+    this.isScanning = false;
 
-    this.isScanning = false; // Oculta el recuadro después de escanear
-
-    if (barcodes.length > 0) {
-      const scannedCode = barcodes[0].rawValue;
+    if (scannedCode) {
       const matchedAsignatura = this.asignaturas.find(asignatura => asignatura.qrCode === scannedCode);
 
       if (matchedAsignatura) {
@@ -61,6 +58,11 @@ export class EscanearPage implements OnInit {
         this.presentAlert('Error', 'Código QR no reconocido.');
       }
     }
+  }
+
+  async checkBarcodeScannerSupport(): Promise<boolean> {
+    const { supported } = await BarcodeScanner.isSupported();
+    return supported;
   }
 
   async requestPermissions(): Promise<boolean> {
@@ -76,6 +78,17 @@ export class EscanearPage implements OnInit {
     });
     await alert.present();
   }
+
+  async scanSingleBarcode(): Promise<string | null> {
+    return new Promise(async (resolve: (value: string | null) => void) => {
+      const listener = await BarcodeScanner.addListener('barcodeScanned', async (result: any) => {
+        await listener.remove();
+        resolve(result?.barcode ?? null);
+      });
+  
+      await BarcodeScanner.startScan();
+    });
+  }  
 
   guardarMensaje() {
     const mensaje = "Ubicación: Las Palomas 7839, Hora del dispositivo: " + new Date().toLocaleString();
